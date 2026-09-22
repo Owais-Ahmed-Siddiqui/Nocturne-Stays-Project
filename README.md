@@ -12,7 +12,7 @@
 ![Cost](https://img.shields.io/badge/Cost-%240-brightgreen)
 ![License](https://img.shields.io/badge/license-Educational-yellow)
 
-**[🌐 Live Demo](https://nocturne-stays.vercel.app)** · **[📜 README](#-table-of-contents)** · **[⚡ Quick Start](#-quick-start)**
+**[🌐 Live Demo](https://nocturne-stays-project.vercel.app)** · **[📜 README](#-table-of-contents)** · **[⚡ Quick Start](#-quick-start)**
 
 </div>
 
