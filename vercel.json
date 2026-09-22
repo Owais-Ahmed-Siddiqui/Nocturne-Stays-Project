@@ -5,7 +5,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://nocturne-stays.onrender.com/api/:path*"
+      "destination": "https://nocturne-stays-project.onrender.com/api/:path*"
     }
   ]
 }
