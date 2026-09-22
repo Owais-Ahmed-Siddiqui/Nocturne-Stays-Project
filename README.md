@@ -34,7 +34,7 @@
 
 ## 🌐 Live Demo
 
-> 🔗 **[https://nocturne-stays.vercel.app](https://nocturne-stays.vercel.app)**
+> 🔗 **[https://nocturne-stays.vercel.app](https://nocturne-stays-project.vercel.app)**
 >
 > *Deployed on Vercel (frontend) + Render (backend) + Supabase (database) — all free tiers.*
 > Haven't deployed yet? Follow [Deploy in 3 Steps](#️-deploy-in-3-steps), then replace this link with your own Vercel URL.
