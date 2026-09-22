@@ -1,0 +1,11 @@
+{
+  "installCommand": "",
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://nocturne-stays.onrender.com/api/:path*"
+    }
+  ]
+}

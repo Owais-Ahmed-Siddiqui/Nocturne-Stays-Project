@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nocturne Stays — Hotel Booking System</title>
+
+  <!-- Tailwind CDN (required) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles (same design, extracted to a file) -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="grain">
+  <!-- Top glow accents -->
+  <div aria-hidden="true" class="fixed -z-10 inset-0">
+    <div class="absolute -top-44 -left-56 w-[620px] h-[620px] rounded-full blur-3xl opacity-25" style="background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), transparent 62%);"></div>
+    <div class="absolute -top-40 -right-64 w-[680px] h-[680px] rounded-full blur-3xl opacity-20" style="background: radial-gradient(circle at 40% 40%, rgba(255,255,255,.12), transparent 62%);"></div>
+  </div>
+
+  <!-- Header / Nav -->
+  <header class="sticky top-0 z-50">
+    <div class="glass border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between">
+          <a href="#home" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-xl grid place-items-center ring-glow" style="background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.10);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
+                <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="white" stroke-opacity="0.9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="leading-tight">
+              <div class="font-display text-lg tracking-wide">Nocturne Stays</div>
+              <div class="text-xs text-white/55">Luxury hotel bookings</div>
+            </div>
+          </a>
+
+          <nav class="hidden md:flex items-center gap-1">
+            <a class="navlink px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#home">Home</a>
+            <a class="navlink px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#hotels">Hotels</a>
+            <a class="navlink px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#mybookings" data-auth="user">My Bookings</a>
+            <a class="navlink px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#profile" data-auth="member">Profile</a>
+            <a class="navlink px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#admin" data-auth="admin">Admin</a>
+            <a class="navlink px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#help">Help</a>
+          </nav>
+
+          <div class="flex items-center gap-2">
+            <button id="btnAuth" class="btn-ghost px-3 py-2 rounded-xl text-sm">Login</button>
+            <button id="btnLogout" class="hidden btn-ghost px-3 py-2 rounded-xl text-sm">Logout</button>
+
+            <button id="mobileMenuBtn" class="md:hidden btn-ghost px-3 py-2 rounded-xl" aria-label="Open menu">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-80">
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="white" stroke-opacity="0.9" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="mobileMenu" class="md:hidden hidden border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 grid gap-1">
+          <a class="px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#home">Intro</a>
+          <a class="px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#hotels">Hotels</a>
+          <a class="px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#mybookings" data-auth="user">My Bookings</a>
+          <a class="px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#profile" data-auth="member">Profile</a>
+          <a class="px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#admin" data-auth="admin">Admin</a>
+          <a class="px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5" href="#help">Help</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Toasts -->
+  <div id="toasts" class="fixed z-[60] top-20 right-4 sm:right-6 grid gap-2 w-[min(92vw,380px)]"></div>
+
+  <!-- Main -->
+  <main class="max-w-[86rem] mx-auto px-4 sm:px-6 lg:px-10 py-10 sm:py-14 lg:py-16">
+
+    <!-- HOME / INTRO -->
+    <section id="view-home" class="view">
+      <!-- Hero -->
+      <div class="grid lg:grid-cols-12 gap-7 lg:gap-10 items-stretch">
+        <div class="lg:col-span-7 card rounded-3xl overflow-hidden relative">
+          <div class="absolute inset-0 opacity-60" style="background:
+            radial-gradient(900px 480px at 20% 15%, rgba(255,255,255,.14), transparent 58%),
+            radial-gradient(700px 420px at 95% 25%, rgba(255,255,255,.08), transparent 58%),
+            linear-gradient(180deg, rgba(255,255,255,.06), transparent 52%);
+          "></div>
+          <div class="relative p-6 sm:p-10">
+            <div class="flex items-center gap-2 text-xs text-white/60">
+              <span class="px-2 py-1 rounded-full bg-white/5 border border-white/10">Curated stays</span>
+              <span class="px-2 py-1 rounded-full bg-white/5 border border-white/10">Pay at hotel</span>
+              <span class="px-2 py-1 rounded-full bg-white/5 border border-white/10">Instant receipt</span>
+            </div>
+            <h1 class="mt-5 font-display text-3xl sm:text-5xl leading-[1.05] tracking-tight">
+              Book a luxury escape.
+              <span class="block text-white/70">Five hotels, three room tiers, one smooth experience.</span>
+            </h1>
+            <p class="mt-4 text-white/65 max-w-xl">
+              Explore immersive properties—from minimalist city suites to ultra-premium skyline penthouses.
+              Create an account, choose your stay, and receive a professional receipt instantly. Admin approval workflow included.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#hotels" class="btn text-sm px-5 py-3 rounded-xl">Explore hotels</a>
+              <a href="#login" class="btn-ghost text-sm px-5 py-3 rounded-xl">Login / Register</a>
+              <button id="heroQuickDemo" class="btn-ghost text-sm px-5 py-3 rounded-xl">View sample receipt</button>
+            </div>
+
+            <div class="mt-8 grid sm:grid-cols-3 gap-3">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Avg. rating</div>
+                <div class="mt-1 text-2xl font-semibold">4.8<span class="text-sm text-white/50">/5</span></div>
+                <div class="mt-2 text-xs text-white/50">From 12,400+ verified stays</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Support</div>
+                <div class="mt-1 text-2xl font-semibold">24/7</div>
+                <div class="mt-2 text-xs text-white/50">Chat, phone & concierge</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Check-in</div>
+                <div class="mt-1 text-2xl font-semibold">2 PM</div>
+                <div class="mt-2 text-xs text-white/50">Late checkout on request</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Visual -->
+        <div class="lg:col-span-5 grid gap-6">
+          <div class="card rounded-3xl overflow-hidden relative">
+            <div class="absolute inset-0">
+              <img
+                alt="Luxury hotel lounge"
+                class="w-full h-full object-cover opacity-70"
+                loading="lazy"
+                src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=60"
+              />
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.25), rgba(7,10,15,.85));"></div>
+            </div>
+            <div class="relative p-6">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-xs text-white/60">Signature experience</div>
+                  <div class="font-display text-xl">Midnight Lounge</div>
+                </div>
+                <div class="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white/70">Live jazz • Fri–Sun</div>
+              </div>
+              <div class="mt-5 grid grid-cols-2 gap-3">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                  <div class="text-xs text-white/55">Amenities</div>
+                  <div class="mt-2 text-sm text-white/75">Spa • Pool • Gym</div>
+                </div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                  <div class="text-xs text-white/55">Wi‑Fi</div>
+                  <div class="mt-2 text-sm text-white/75">High-speed • Free</div>
+                </div>
+              </div>
+              <div class="mt-5">
+                <div class="divider"></div>
+                <div class="mt-4 flex items-center justify-between">
+                  <div class="text-xs text-white/55">From</div>
+                  <div class="text-white/80 text-sm">PKR <span class="text-xl font-semibold" id="homeFromPrice">8,900</span><span class="text-xs text-white/55"> / night</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-xs text-white/55">What you get</div>
+                <div class="font-display text-xl">Services & Standards</div>
+              </div>
+              <div class="text-xs text-white/60">Nocturne Promise</div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-sm font-semibold">Quiet Rooms</div>
+                <div class="text-xs text-white/55 mt-1">Acoustic glazing + blackout</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-sm font-semibold">Smart Check-in</div>
+                <div class="text-xs text-white/55 mt-1">Fast desk & digital ID</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-sm font-semibold">Premium Linen</div>
+                <div class="text-xs text-white/55 mt-1">300-thread-count bedding</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-sm font-semibold">Safety First</div>
+                <div class="text-xs text-white/55 mt-1">Verified partners & policies</div>
+              </div>
+            </div>
+
+            <div class="mt-5 text-xs text-white/50">
+              Tip: Book your stay, then manage requests from <span class="text-white/70">My Bookings</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Landing: featured hotels (rendered by JS) -->
+      <section class="reveal mt-12 sm:mt-16">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <h2 class="font-display text-2xl sm:text-3xl">Featured stays</h2>
+            <p class="mt-2 text-white/60 max-w-2xl">Handpicked properties — tap a card to explore rooms, pricing, and dates.</p>
+          </div>
+          <a href="#hotels" class="hidden sm:inline-flex btn-ghost px-4 py-2 rounded-xl text-sm">View all hotels →</a>
+        </div>
+        <div id="landingHotelGrid" class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        <div class="mt-5 sm:hidden">
+          <a href="#hotels" class="btn-ghost px-4 py-2 rounded-xl text-sm inline-flex w-full justify-center">View all hotels →</a>
+        </div>
+      </section>
+
+      <!-- Highlights / sections -->
+      <div class="mt-12 sm:mt-16 lg:mt-20 grid gap-12 sm:gap-14">
+        <section class="reveal">
+          <div class="flex items-end justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl sm:text-3xl">Rooms, designed for the Noir Aesthetic</h2>
+              <p class="mt-2 text-white/60 max-w-2xl">Three tiers across all hotels: Standard (clean), Deluxe (bigger), Suite (statement). Transparent pricing and instant receipts.</p>
+            </div>
+            <a href="#hotels" class="hidden sm:inline-flex btn-ghost px-4 py-2 rounded-xl text-sm">Compare hotels →</a>
+          </div>
+
+          <div class="mt-6 grid md:grid-cols-3 gap-5">
+            <div class="card rounded-3xl overflow-hidden group">
+              <div class="relative aspect-[16/9]">
+                <img class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:opacity-85 transition" loading="lazy" alt="Standard room" src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=60" />
+                <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.15), rgba(7,10,15,.92));"></div>
+              </div>
+              <div class="p-6">
+                <div class="flex items-center justify-between">
+                  <div class="font-display text-xl">Standard</div>
+                  <div class="text-xs text-white/55">Best value</div>
+                </div>
+                <ul class="mt-3 space-y-2 text-sm text-white/65">
+                  <li class="flex gap-2"><span class="text-cyan-300/80">•</span> Queen bed, rainfall shower</li>
+                  <li class="flex gap-2"><span class="text-cyan-300/80">•</span> Desk, blackout curtains</li>
+                  <li class="flex gap-2"><span class="text-cyan-300/80">•</span> High-speed Wi‑Fi</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card rounded-3xl overflow-hidden group">
+              <div class="relative aspect-[16/9]">
+                <img class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:opacity-85 transition" loading="lazy" alt="Deluxe room" src="https://images.unsplash.com/photo-1549875648-357fef68fec7?auto=format&fit=crop&w=1400&q=60" />
+                <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.15), rgba(7,10,15,.92));"></div>
+              </div>
+              <div class="p-6">
+                <div class="flex items-center justify-between">
+                  <div class="font-display text-xl">Deluxe</div>
+                  <div class="text-xs text-white/55">Room to breathe</div>
+                </div>
+                <ul class="mt-3 space-y-2 text-sm text-white/65">
+                  <li class="flex gap-2"><span class="text-violet-300/80">•</span> Bigger layout + seating</li>
+                  <li class="flex gap-2"><span class="text-violet-300/80">•</span> City-view or pool-view</li>
+                  <li class="flex gap-2"><span class="text-violet-300/80">•</span> Priority check-in</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="card rounded-3xl overflow-hidden group">
+              <div class="relative aspect-[16/9]">
+                <img class="absolute inset-0 w-full h-full object-cover opacity-75 group-hover:opacity-85 transition" loading="lazy" alt="Suite room" src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1400&q=60" />
+                <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.15), rgba(7,10,15,.92));"></div>
+              </div>
+              <div class="p-6">
+                <div class="flex items-center justify-between">
+                  <div class="font-display text-xl">Suite</div>
+                  <div class="text-xs text-white/55">Iconic</div>
+                </div>
+                <ul class="mt-3 space-y-2 text-sm text-white/65">
+                  <li class="flex gap-2"><span class="text-emerald-300/80">•</span> Separate lounge + minibar</li>
+                  <li class="flex gap-2"><span class="text-emerald-300/80">•</span> Concierge + late checkout</li>
+                  <li class="flex gap-2"><span class="text-emerald-300/80">•</span> Best-view guarantee</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="reveal">
+          <div class="grid lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-4 card rounded-3xl p-6 sm:p-7">
+              <div class="text-xs text-white/55">Included in every stay</div>
+              <h3 class="mt-2 font-display text-2xl">Amenities</h3>
+              <p class="mt-2 text-sm text-white/60">A consistent standard, upgraded per hotel tier.</p>
+              <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Spa & Sauna</div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Infinity Pool</div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Gym</div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Restaurant</div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Airport pickup</div>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Concierge</div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-8 card rounded-3xl overflow-hidden relative">
+              <div class="absolute inset-0">
+                <img class="w-full h-full object-cover opacity-70" loading="lazy" alt="Hotel pool" src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1700&q=60" />
+                <div class="absolute inset-0" style="background: linear-gradient(90deg, rgba(7,10,15,.92), rgba(7,10,15,.35));"></div>
+              </div>
+              <div class="relative p-6 sm:p-10">
+                <div class="max-w-xl">
+                  <div class="text-xs text-white/55">Signature services</div>
+                  <h3 class="mt-2 font-display text-3xl">Concierge that actually helps</h3>
+                  <p class="mt-3 text-white/60">From late checkouts and room preferences to city plans and transfers — your requests are tracked inside your booking receipt and visible to admin for approval.</p>
+
+                  <div class="mt-6 grid sm:grid-cols-2 gap-3">
+                    <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                      <div class="text-sm font-semibold">Flexible requests</div>
+                      <div class="text-xs text-white/55 mt-1">Extra pillows, quiet floor, anniversary note</div>
+                    </div>
+                    <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                      <div class="text-sm font-semibold">Transparent policy</div>
+                      <div class="text-xs text-white/55 mt-1">Pay at hotel • Verify at check-in</div>
+                    </div>
+                  </div>
+
+                  <div class="mt-7 flex flex-wrap gap-3">
+                    <a class="btn px-5 py-3 rounded-xl text-sm" href="#hotels">Choose a hotel</a>
+                    <a class="btn-ghost px-5 py-3 rounded-xl text-sm" href="#help">FAQs & policies</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <section class="reveal">
+          <div class="flex items-end justify-between gap-4">
+            <div>
+              <h2 class="font-display text-2xl sm:text-3xl">Reviews</h2>
+              <p class="mt-2 text-white/60">Realistic, detailed feedback—what a professional hotel page should show.</p>
+            </div>
+          </div>
+          <div class="mt-6 grid md:grid-cols-3 gap-5">
+            <div class="card rounded-3xl p-6">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-semibold">"Immaculate"</div>
+                <div class="text-xs text-white/55">Suite • 3 nights</div>
+              </div>
+              <p class="mt-3 text-sm text-white/65">The lighting, textures, and silence were perfect. Check-in was smooth, and the receipt had every detail. Paid at the hotel with zero friction.</p>
+              <div class="mt-4 text-xs text-white/55">— Ayesha K.</div>
+            </div>
+            <div class="card rounded-3xl p-6">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-semibold">"Worth it"</div>
+                <div class="text-xs text-white/55">Deluxe • 2 nights</div>
+              </div>
+              <p class="mt-3 text-sm text-white/65">Loved the lounge and the spa. The staff honored our late checkout request after admin approval. Would book again.</p>
+              <div class="mt-4 text-xs text-white/55">— Hamza R.</div>
+            </div>
+            <div class="card rounded-3xl p-6">
+              <div class="flex items-center justify-between">
+                <div class="text-sm font-semibold">"Great value"</div>
+                <div class="text-xs text-white/55">Standard • 1 night</div>
+              </div>
+              <p class="mt-3 text-sm text-white/65">Clean room, fast Wi‑Fi, and the dark theme is gorgeous. Booking flow felt like a real system.</p>
+              <div class="mt-4 text-xs text-white/55">— Zain M.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="reveal">
+          <div class="card rounded-3xl p-6 sm:p-10">
+            <div class="grid lg:grid-cols-12 gap-8">
+              <div class="lg:col-span-5">
+                <div class="text-xs text-white/55">Location</div>
+                <h2 class="mt-2 font-display text-2xl sm:text-3xl">In the heart of the city (and beyond)</h2>
+                <p class="mt-3 text-white/60">Each property lists a clear location, nearby highlights, and transport access. Select a hotel to see its details and room options.</p>
+                <div class="mt-5 grid gap-3">
+                  <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                    <div class="text-sm font-semibold">Airport transfer</div>
+                    <div class="text-xs text-white/55 mt-1">Available at most locations (request in booking)</div>
+                  </div>
+                  <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                    <div class="text-sm font-semibold">Nearby landmarks</div>
+                    <div class="text-xs text-white/55 mt-1">Museums, restaurants, skyline points</div>
+                  </div>
+                </div>
+              </div>
+              <div class="lg:col-span-7">
+                <div class="rounded-3xl overflow-hidden border border-white/10 bg-white/5">
+                  <div class="aspect-[16/10] relative">
+                    <img class="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" alt="City aerial" src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1600&q=60" />
+                    <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.25), rgba(7,10,15,.88));"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-5 sm:p-6">
+                      <div class="flex flex-wrap items-center gap-2 text-xs text-white/60">
+                        <span class="px-2 py-1 rounded-full bg-white/5 border border-white/10">Walkable districts</span>
+                        <span class="px-2 py-1 rounded-full bg-white/5 border border-white/10">Secure parking</span>
+                        <span class="px-2 py-1 rounded-full bg-white/5 border border-white/10">Quiet floors</span>
+                      </div>
+                      <div class="mt-3 text-sm text-white/70">Select a hotel to see its specific address and highlights.</div>
+                      <div class="mt-4">
+                        <a href="#hotels" class="btn-ghost inline-flex px-4 py-2 rounded-xl text-sm">Browse hotels →</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- HOTELS -->
+    <section id="view-hotels" class="view hidden">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl">Hotels</h1>
+          <p class="mt-2 text-white/60">Choose from 5 properties (sorted from less to more expensive). Select one to view details and book a room.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <input id="hotelSearch" class="input px-4 py-2 rounded-xl text-sm w-full sm:w-[min(92vw,240px)]" placeholder="Search hotels, cities..." />
+          <button id="sortPrice" class="btn-ghost px-4 py-2 rounded-xl text-sm">Sort: Price ↑</button>
+          <button id="filterCity" class="btn-ghost px-4 py-2 rounded-xl text-sm">Filter: All</button>
+          <button id="filterRating" class="btn-ghost px-4 py-2 rounded-xl text-sm">Rating: Any</button>
+          <button id="filterPrice" class="btn-ghost px-4 py-2 rounded-xl text-sm">Price: Any</button>
+        </div>
+      </div>
+
+      <div class="mt-8 grid lg:grid-cols-12 gap-7 lg:gap-10">
+        <div class="lg:col-span-8">
+          <div id="hotelGrid" class="grid sm:grid-cols-2 gap-6 lg:gap-7"></div>
+        </div>
+
+        <aside class="lg:col-span-4">
+          <div class="card rounded-3xl p-6 sm:p-7 sticky top-24">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-xs text-white/55">Selected</div>
+                <div class="font-display text-2xl" id="selectedHotelName">—</div>
+              </div>
+              <div class="text-right">
+                <div class="text-xs text-white/55">From</div>
+                <div class="text-white/85 text-sm">PKR <span class="text-2xl font-semibold" id="selectedHotelPrice">—</span></div>
+              </div>
+            </div>
+
+            <div class="mt-4 text-sm text-white/60" id="selectedHotelDesc">Pick a hotel from the left to see details here.</div>
+
+            <div class="mt-5 divider"></div>
+
+            <div class="mt-5">
+              <div class="text-xs text-white/55">Room tier</div>
+              <div class="mt-2 grid grid-cols-3 gap-2">
+                <button class="roomTierBtn btn-ghost px-3 py-2 rounded-xl text-xs" data-tier="standard">Standard</button>
+                <button class="roomTierBtn btn-ghost px-3 py-2 rounded-xl text-xs" data-tier="deluxe">Deluxe</button>
+                <button class="roomTierBtn btn-ghost px-3 py-2 rounded-xl text-xs" data-tier="suite">Suite</button>
+              </div>
+              <div class="mt-3 text-xs text-white/50" id="tierHint">Select a tier to see the estimate.</div>
+
+              <div class="mt-4 grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs text-white/55">Check-in</label>
+                  <input id="quickCheckin" type="date" class="input w-full mt-1 px-3 py-2 rounded-xl text-sm" />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Check-out</label>
+                  <input id="quickCheckout" type="date" class="input w-full mt-1 px-3 py-2 rounded-xl text-sm" />
+                </div>
+              </div>
+
+              <div class="mt-4 flex items-center justify-between">
+                <div>
+                  <div class="text-xs text-white/55">Estimated total</div>
+                  <div class="text-lg font-semibold" id="quickEstimate">PKR —</div>
+                </div>
+                <button id="quickBookBtn" class="btn px-4 py-3 rounded-xl text-sm">Book</button>
+              </div>
+              <div class="mt-2 text-xs text-white/45">Final amount is paid at hotel. Admin approval may be required.</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Hotel detail drawer -->
+      <div id="hotelDetail" class="mt-8 hidden">
+        <div class="card rounded-3xl overflow-hidden">
+          <div class="relative">
+            <div class="aspect-[21/9]">
+              <img id="detailImg" class="w-full h-full object-cover opacity-70" loading="lazy" alt="Hotel cover" src="" />
+            </div>
+            <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.15), rgba(7,10,15,.92));"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+              <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div>
+                  <div class="text-xs text-white/55" id="detailLocation">—</div>
+                  <h2 class="font-display text-3xl sm:text-4xl" id="detailName">—</h2>
+                  <div class="mt-2 flex flex-wrap gap-2" id="detailTags"></div>
+                </div>
+                <div class="text-left sm:text-right">
+                  <div class="text-xs text-white/55">From</div>
+                  <div class="text-white/90">PKR <span class="text-3xl font-semibold" id="detailFrom">—</span><span class="text-xs text-white/55"> / night</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 sm:p-10 grid lg:grid-cols-12 gap-7">
+            <div class="lg:col-span-7">
+              <h3 class="font-display text-2xl">About this hotel</h3>
+              <p class="mt-3 text-white/60" id="detailAbout">—</p>
+
+              <div class="mt-6 grid sm:grid-cols-2 gap-3" id="detailHighlights"></div>
+
+              <div class="mt-7">
+                <div class="text-xs text-white/55">Nearby</div>
+                <div class="mt-2 grid sm:grid-cols-3 gap-3" id="detailNearby"></div>
+              </div>
+
+              <div class="mt-7">
+                <div class="text-xs text-white/55">Guest reviews</div>
+                <div class="mt-2 grid gap-3" id="detailReviews"></div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5">
+              <div class="rounded-3xl bg-white/5 border border-white/10 p-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-xs text-white/55">Room options</div>
+                    <div class="font-display text-xl">Pick your tier</div>
+                  </div>
+                  <div class="text-xs text-white/55" id="detailRating">—</div>
+                </div>
+
+                <div class="mt-4 grid gap-3" id="detailRoomCards"></div>
+
+                <div class="mt-5 divider"></div>
+
+                <div class="mt-5 flex flex-wrap gap-3">
+                  <button id="detailBookBtn" class="btn px-5 py-3 rounded-xl text-sm">Book this hotel</button>
+                  <button id="detailBackBtn" class="btn-ghost px-5 py-3 rounded-xl text-sm">Back to list</button>
+                </div>
+                <div class="mt-2 text-xs text-white/45">Login required to confirm booking.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN -->
+    <section id="view-login" class="view hidden">
+      <div class="grid lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-6">
+          <div class="card rounded-3xl overflow-hidden">
+            <div class="relative">
+              <div class="aspect-[16/9]">
+                <img class="w-full h-full object-cover opacity-70" loading="lazy" alt="Hotel reception" src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1600&q=60" />
+              </div>
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.20), rgba(7,10,15,.92));"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+                <div class="text-xs text-white/55">Secure access</div>
+                <h1 class="font-display text-3xl sm:text-4xl">Login</h1>
+                <p class="mt-2 text-white/60">Users must login before booking. Admin login unlocks the dashboard.</p>
+              </div>
+            </div>
+
+            <div class="p-6 sm:p-10">
+              <form id="loginForm" class="grid gap-4" autocomplete="on">
+                <div>
+                  <label class="text-xs text-white/55">Email</label>
+                  <input class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="email" id="loginEmail" placeholder="you@example.com" required />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Password</label>
+                  <input class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="password" id="loginPassword" placeholder="••••••••" required />
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <label class="flex items-center gap-2 text-xs text-white/55">
+                    <input id="loginAsAdmin" type="checkbox" class="accent-cyan-300" />
+                    Login as admin
+                  </label>
+                  <a href="#register" class="text-xs text-white/65 hover:text-white">Create an account →</a>
+                </div>
+                <button class="btn px-5 py-3 rounded-xl text-sm" type="submit">Login</button>
+
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 text-xs text-white/55">
+                  <div class="font-semibold text-white/70">Admin credentials</div>
+                  <div class="mt-1">Admin: <span class="text-white/80">admin@nocturne.stays</span> / <span class="text-white/80">Admin@2467</span></div>
+                  <div class="mt-1">Users can create an account from Register.</div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 grid gap-6">
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Why login?</div>
+            <h2 class="mt-2 font-display text-2xl">Bookings need identity</h2>
+            <p class="mt-3 text-white/60">We capture your name and email for your receipt and allow admin approval for booking confirmation.</p>
+            <div class="mt-5 grid sm:grid-cols-2 gap-3 text-sm">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Instant receipt PDF-style</div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Booking statuses</div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Admin approve/decline</div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">My Bookings history</div>
+            </div>
+          </div>
+
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Security note</div>
+            <h3 class="mt-2 font-display text-2xl">Account security</h3>
+            <p class="mt-3 text-white/60">Use a strong password and keep your login details private. Your account is used for bookings and receipts.</p>
+            <a href="#help" class="mt-4 inline-flex btn-ghost px-4 py-2 rounded-xl text-sm">View policies →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section id="view-register" class="view hidden">
+      <div class="grid lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5">
+          <div class="card rounded-3xl p-6 sm:p-10">
+            <div class="text-xs text-white/55">Create account</div>
+            <h1 class="mt-2 font-display text-3xl sm:text-4xl">Register</h1>
+            <p class="mt-3 text-white/60">Create a user account to book rooms and view receipts. Admin accounts are separate.</p>
+            <div class="mt-6 divider"></div>
+            <div class="mt-6 text-sm text-white/60">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl grid place-items-center bg-white/5 border border-white/10">1</div>
+                <div>
+                  <div class="font-semibold text-white/75">Register</div>
+                  <div class="text-xs text-white/55">Email + password</div>
+                </div>
+              </div>
+              <div class="mt-4 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl grid place-items-center bg-white/5 border border-white/10">2</div>
+                <div>
+                  <div class="font-semibold text-white/75">Login</div>
+                  <div class="text-xs text-white/55">Required before booking</div>
+                </div>
+              </div>
+              <div class="mt-4 flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl grid place-items-center bg-white/5 border border-white/10">3</div>
+                <div>
+                  <div class="font-semibold text-white/75">Book & receive receipt</div>
+                  <div class="text-xs text-white/55">Pay at hotel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7">
+          <div class="card rounded-3xl overflow-hidden">
+            <div class="relative">
+              <div class="aspect-[21/9]">
+                <img class="w-full h-full object-cover opacity-70" loading="lazy" alt="Hotel room" src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=1600&q=60" />
+              </div>
+              <div class="absolute inset-0" style="background: linear-gradient(180deg, rgba(7,10,15,.20), rgba(7,10,15,.92));"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+                <div class="text-xs text-white/55">Nocturne ID</div>
+                <h2 class="font-display text-2xl sm:text-3xl">Your profile, your receipts</h2>
+              </div>
+            </div>
+
+            <div class="p-6 sm:p-10">
+              <form id="registerForm" class="grid gap-4" autocomplete="on">
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs text-white/55">Full name</label>
+                    <input class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="text" id="regName" placeholder="Your name" required />
+                  </div>
+                  <div>
+                    <label class="text-xs text-white/55">Email</label>
+                    <input class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="email" id="regEmail" placeholder="you@example.com" required />
+                  </div>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs text-white/55">Password</label>
+                    <input class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="password" id="regPassword" placeholder="Min 8 chars" required />
+                  </div>
+                  <div>
+                    <label class="text-xs text-white/55">Confirm password</label>
+                    <input class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="password" id="regPassword2" placeholder="Repeat" required />
+                  </div>
+                </div>
+                <div class="text-xs text-white/50">
+                  By registering, you agree to pay at hotel and allow admin verification at check-in.
+                </div>
+                <button class="btn px-5 py-3 rounded-xl text-sm" type="submit">Create account</button>
+                <div class="text-xs text-white/55">Already have an account? <a href="#login" class="text-white/75 hover:text-white">Login →</a></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOOKING -->
+    <section id="view-booking" class="view hidden">
+      <div class="grid lg:grid-cols-12 gap-7 lg:gap-10 items-start">
+        <div class="lg:col-span-7">
+          <div class="card rounded-3xl p-6 sm:p-10">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <div class="text-xs text-white/55">Booking</div>
+                <h1 class="mt-2 font-display text-3xl sm:text-4xl">Reserve your room</h1>
+                <p class="mt-2 text-white/60">Fill in details to generate your receipt. Payment is done at the hotel.</p>
+              </div>
+              <div class="hidden sm:block rounded-2xl bg-white/5 border border-white/10 p-4 text-right">
+                <div class="text-xs text-white/55">Status</div>
+                <div class="mt-1 text-sm font-semibold text-white/75">Pending admin approval</div>
+              </div>
+            </div>
+
+            <div class="mt-6 divider"></div>
+
+            <form id="bookingForm" class="mt-6 grid gap-4">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs text-white/55">Hotel</label>
+                  <select id="bookHotel" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm"></select>
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Room tier</label>
+                  <select id="bookTier" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm">
+                    <option value="standard">Standard</option>
+                    <option value="deluxe">Deluxe</option>
+                    <option value="suite">Suite</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs text-white/55">Full name</label>
+                  <input id="bookName" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="text" placeholder="Guest name" required />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Email</label>
+                  <input id="bookEmail" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="email" placeholder="guest@email.com" required />
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs text-white/55">Check-in</label>
+                  <input id="bookCheckin" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="date" required />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Check-out</label>
+                  <input id="bookCheckout" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="date" required />
+                </div>
+              </div>
+
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs text-white/55">Guests</label>
+                  <input id="bookGuests" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="number" min="1" max="6" value="2" required />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Phone (optional)</label>
+                  <input id="bookPhone" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="tel" placeholder="+92..." />
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs text-white/55">Special requests (optional)</label>
+                <textarea id="bookRequests" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" rows="3" placeholder="Quiet room, high floor, extra pillows..."></textarea>
+              </div>
+
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-5">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-xs text-white/55">Estimated total</div>
+                    <div class="text-2xl font-semibold" id="bookTotal">PKR —</div>
+                    <div class="text-xs text-white/45 mt-1">Paid at hotel. Receipt includes all details.</div>
+                  </div>
+                  <button class="btn px-5 py-3 rounded-xl text-sm" type="submit">Generate receipt & book</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 grid gap-6">
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Booking summary</div>
+            <h2 class="mt-2 font-display text-2xl">Your stay at a glance</h2>
+            <div class="mt-4 grid gap-3" id="bookingSummary"></div>
+          </div>
+
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Policy</div>
+            <h3 class="mt-2 font-display text-2xl">Pay at hotel</h3>
+            <p class="mt-3 text-white/60">We don’t take payment online. Your room is reserved and marked as <span class="text-white/75">Pending</span> until an admin approves it.</p>
+            <div class="mt-4 grid sm:grid-cols-2 gap-3 text-sm">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">ID required at check-in</div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">Refund rules vary per hotel</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY BOOKINGS -->
+    <section id="view-mybookings" class="view hidden">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl">My Bookings</h1>
+          <p class="mt-2 text-white/60">View receipts, statuses, and history. Only visible when logged in as a user.</p>
+        </div>
+        <div class="flex gap-2">
+          <a href="#hotels" class="btn-ghost px-4 py-2 rounded-xl text-sm">Book another stay</a>
+        </div>
+      </div>
+
+      <div class="mt-8 grid lg:grid-cols-12 gap-7 lg:gap-10">
+        <div class="lg:col-span-8">
+          <div id="myBookingsList" class="grid gap-4"></div>
+        </div>
+        <aside class="lg:col-span-4">
+          <div class="card rounded-3xl p-6 sm:p-7 sticky top-24">
+            <div class="text-xs text-white/55">Tips</div>
+            <h2 class="mt-2 font-display text-2xl">Manage smoothly</h2>
+            <ul class="mt-3 space-y-2 text-sm text-white/60">
+              <li>• Pending bookings need admin approval.</li>
+              <li>• Your receipt contains booking ID and policy note.</li>
+              <li>• If declined, you can rebook a different date/tier.</li>
+            </ul>
+            <div class="mt-5 divider"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ADMIN DASHBOARD -->
+    <section id="view-admin" class="view hidden">
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+        <div>
+          <h1 class="font-display text-3xl sm:text-4xl">Admin Dashboard</h1>
+          <p class="mt-2 text-white/60">Review all bookings, then approve or decline. (Admin-only.)</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="adminExport" class="btn-ghost px-4 py-2 rounded-xl text-sm">Export JSON</button>
+          <button id="adminClear" class="btn-ghost px-4 py-2 rounded-xl text-sm">Clear demo data</button>
+        </div>
+      </div>
+
+      <div class="mt-8 grid lg:grid-cols-12 gap-7 lg:gap-10">
+        <div class="lg:col-span-4">
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Overview</div>
+            <h2 class="mt-2 font-display text-2xl">Bookings</h2>
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Total</div>
+                <div class="text-2xl font-semibold" id="adminTotal">0</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Pending</div>
+                <div class="text-2xl font-semibold" id="adminPending">0</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Approved</div>
+                <div class="text-2xl font-semibold" id="adminApproved">0</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Declined</div>
+                <div class="text-2xl font-semibold" id="adminDeclined">0</div>
+              </div>
+            </div>
+            <div class="mt-5 divider"></div>
+            <div class="mt-5 text-xs text-white/50">
+              Admin actions update booking statuses instantly.
+            </div>
+          </div>
+
+          <div class="mt-6 card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Filters</div>
+            <h3 class="mt-2 font-display text-2xl">Status</h3>
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <button class="adminFilter btn-ghost px-3 py-2 rounded-xl text-sm" data-status="all">All</button>
+              <button class="adminFilter btn-ghost px-3 py-2 rounded-xl text-sm" data-status="pending">Pending</button>
+              <button class="adminFilter btn-ghost px-3 py-2 rounded-xl text-sm" data-status="approved">Approved</button>
+              <button class="adminFilter btn-ghost px-3 py-2 rounded-xl text-sm" data-status="declined">Declined</button>
+            </div>
+
+            <div class="mt-5 divider"></div>
+
+            <div class="mt-5">
+              <div class="text-xs text-white/55">Created between</div>
+              <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-xs text-white/45">From</label>
+                  <input id="adminFrom" type="date" class="input w-full mt-1 px-3 py-2 rounded-xl text-sm" />
+                </div>
+                <div>
+                  <label class="text-xs text-white/45">To</label>
+                  <input id="adminTo" type="date" class="input w-full mt-1 px-3 py-2 rounded-xl text-sm" />
+                </div>
+              </div>
+              <button id="adminDateClear" class="btn-ghost px-3 py-2 rounded-xl text-sm mt-3 w-full">Clear date filter</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8">
+          <div class="card rounded-3xl overflow-hidden">
+            <div class="p-6 sm:p-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <div class="text-xs text-white/55">Queue</div>
+                <div class="font-display text-2xl">All booking requests</div>
+              </div>
+              <div class="flex gap-2">
+                <input id="adminSearch" class="input px-4 py-2 rounded-xl text-sm w-[min(92vw,320px)]" placeholder="Search by name, email, booking ID" />
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div id="adminTable" class="p-6 sm:p-7 grid gap-4"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 5 — user accounts directory -->
+      <div class="mt-7 card rounded-3xl overflow-hidden">
+        <div class="p-6 sm:p-7">
+          <div class="text-xs text-white/55">Directory</div>
+          <div class="font-display text-2xl">User accounts</div>
+        </div>
+        <div class="divider"></div>
+        <div id="adminUsersList" class="p-6 sm:p-7 grid gap-3">
+          <div class="text-xs text-white/45">Loading…</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE (Phase 5) -->
+    <section id="view-profile" class="view hidden">
+      <div class="grid lg:grid-cols-12 gap-7 lg:gap-10 items-start">
+        <div class="lg:col-span-5">
+          <div class="card rounded-3xl p-6 sm:p-10">
+            <div class="text-xs text-white/55">Account</div>
+            <h1 class="mt-2 font-display text-3xl sm:text-4xl">Profile</h1>
+            <p class="mt-3 text-white/60">Your account details and security settings.</p>
+            <div class="mt-6 divider"></div>
+            <div class="mt-6 grid gap-3">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Signed in as</div>
+                <div class="mt-1 text-sm font-semibold" id="profileRole">—</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Email</div>
+                <div class="mt-1 text-sm font-semibold" id="profileEmail">—</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Membership</div>
+                <div class="mt-1 text-sm font-semibold">Nocturne ID</div>
+                <div class="mt-1 text-xs text-white/55">Pay at hotel • Admin-approved bookings</div>
+              </div>
+            </div>
+            <a href="#hotels" class="mt-5 inline-flex btn-ghost px-4 py-2 rounded-xl text-sm">Browse hotels →</a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 grid gap-6">
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Personal details</div>
+            <h2 class="mt-2 font-display text-2xl">Edit name</h2>
+            <form id="profileForm" class="mt-4 grid gap-4">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs text-white/55">Full name</label>
+                  <input id="profileName" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="text" placeholder="Your name" required />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Email (cannot be changed)</label>
+                  <input id="profileEmailInput" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm opacity-60" type="email" disabled />
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <div class="text-xs text-white/45">Used on your receipts and bookings.</div>
+                <button class="btn px-5 py-3 rounded-xl text-sm" type="submit">Save changes</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card rounded-3xl p-6 sm:p-7">
+            <div class="text-xs text-white/55">Security</div>
+            <h2 class="mt-2 font-display text-2xl">Change password</h2>
+            <form id="passwordForm" class="mt-4 grid gap-4">
+              <div>
+                <label class="text-xs text-white/55">Current password</label>
+                <input id="pwCurrent" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="password" placeholder="••••••••" required />
+              </div>
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs text-white/55">New password</label>
+                  <input id="pwNew" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="password" placeholder="Min 8 chars" required />
+                </div>
+                <div>
+                  <label class="text-xs text-white/55">Confirm new password</label>
+                  <input id="pwConfirm" class="input w-full mt-1 px-4 py-3 rounded-xl text-sm" type="password" placeholder="Repeat" required />
+                </div>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <div class="text-xs text-white/45">Min 8 characters.</div>
+                <button class="btn px-5 py-3 rounded-xl text-sm" type="submit">Update password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HELP -->
+    <section id="view-help" class="view hidden">
+      <div class="card rounded-3xl p-6 sm:p-10">
+        <div class="text-xs text-white/55">Help</div>
+        <h1 class="mt-2 font-display text-3xl sm:text-4xl">Policies & Support</h1>
+        <p class="mt-3 text-white/60 max-w-4xl">Find booking policies, check-in rules, and support information. For questions, contact the front desk of your selected hotel.</p>
+
+        <div class="mt-10 grid lg:grid-cols-12 gap-7 lg:gap-10">
+          <div class="lg:col-span-6 rounded-3xl bg-white/5 border border-white/10 p-6">
+            <h2 class="font-display text-2xl">Booking policy</h2>
+            <ul class="mt-4 space-y-3 text-sm text-white/65">
+              <li class="flex gap-2"><span class="text-cyan-300/80">•</span> Your booking is created with status <span class="text-white/80">Pending</span> until admin approval.</li>
+              <li class="flex gap-2"><span class="text-cyan-300/80">•</span> Please bring a valid ID for verification at check-in.</li>
+              <li class="flex gap-2"><span class="text-cyan-300/80">•</span> Payment is done at the hotel reception at check-in or checkout (hotel policy).</li>
+            </ul>
+          </div>
+
+          <div class="lg:col-span-6 rounded-3xl bg-white/5 border border-white/10 p-6">
+            <h2 class="font-display text-2xl">Check-in & check-out</h2>
+            <div class="mt-4 grid sm:grid-cols-2 gap-3 text-sm">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Standard check-in</div>
+                <div class="mt-1 font-semibold">2:00 PM</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Standard check-out</div>
+                <div class="mt-1 font-semibold">12:00 PM</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Late checkout</div>
+                <div class="mt-1 font-semibold">On request</div>
+                <div class="mt-1 text-xs text-white/55">Subject to availability</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs text-white/55">Cancellation</div>
+                <div class="mt-1 font-semibold">Varies by hotel</div>
+                <div class="mt-1 text-xs text-white/55">Ask reception for details</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 rounded-3xl bg-white/5 border border-white/10 p-6">
+          <h2 class="font-display text-2xl">FAQs</h2>
+          <div class="mt-4 grid gap-3 text-sm text-white/65">
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+              <div class="font-semibold text-white/80">Do I need an account to book?</div>
+              <div class="mt-1 text-xs text-white/55">Yes. Login is required so your receipt and booking history are saved.</div>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+              <div class="font-semibold text-white/80">How do I see my receipt again?</div>
+              <div class="mt-1 text-xs text-white/55">Go to <span class="text-white/80">My Bookings</span> and open the receipt.</div>
+            </div>
+            <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+              <div class="font-semibold text-white/80">When is my booking confirmed?</div>
+              <div class="mt-1 text-xs text-white/55">After admin approval. The status updates automatically in your booking list.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-10 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Brand -->
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl grid place-items-center" style="background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.04)); border:1px solid rgba(255,255,255,.10);">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="opacity-90">
+                <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5Z" stroke="white" stroke-opacity="0.9" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="font-display text-lg tracking-wide">Nocturne Stays</div>
+          </div>
+          <p class="text-sm text-white/60">Luxury hotel bookings with instant receipts and admin approval workflow.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-sm font-semibold text-white/80 mb-4">Quick Links</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#home" class="text-white/60 hover:text-white transition">Home</a></li>
+            <li><a href="#hotels" class="text-white/60 hover:text-white transition">Hotels</a></li>
+            <li><a href="#help" class="text-white/60 hover:text-white transition">FAQs & Policies</a></li>
+            <li><a href="#login" class="text-white/60 hover:text-white transition">Login / Register</a></li>
+          </ul>
+        </div>
+
+        <!-- Support -->
+        <div>
+          <h3 class="text-sm font-semibold text-white/80 mb-4">Support</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#mybookings" class="text-white/60 hover:text-white transition">My Bookings</a></li>
+            <li><a href="#help" class="text-white/60 hover:text-white transition">Check-in Policy</a></li>
+            <li><a href="#help" class="text-white/60 hover:text-white transition">Cancellation</a></li>
+            <li><span class="text-white/60">24/7 Concierge</span></li>
+          </ul>
+        </div>
+
+        <!-- Social Media (GitHub + LinkedIn only) -->
+        <div>
+          <h3 class="text-sm font-semibold text-white/80 mb-4">Follow Us</h3>
+          <div class="flex gap-3 mb-4">
+            <!-- Replace these hrefs with your own GitHub + LinkedIn profile URLs -->
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl grid place-items-center btn-ghost" aria-label="GitHub">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z" fill="white" fill-opacity="0.8"/>
+              </svg>
+            </a>
+            <a href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl grid place-items-center btn-ghost" aria-label="LinkedIn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.98 3.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM.5 8.5h4V23h-4V8.5Zm7 0h3.84v1.98h.05c.53-1 1.84-2.06 3.78-2.06 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.2c0-1.72-.03-3.93-2.4-3.93-2.4 0-2.77 1.87-2.77 3.8V23h-4V8.5Z" fill="white" fill-opacity="0.8"/>
+              </svg>
+            </a>
+          </div>
+          <p class="text-xs text-white/50">Stay connected for exclusive offers and updates.</p>
+        </div>
+      </div>
+
+      <div class="divider my-8"></div>
+
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="text-xs text-white/45">© 2024 Nocturne Stays. All rights reserved.</div>
+        <div class="text-xs text-white/45">Designed By Owais Ahmed 2467-2024</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Receipt Modal -->
+  <div id="receiptModal" class="fixed inset-0 z-[70] hidden">
+    <div class="absolute inset-0 bg-black/70" data-close="receipt"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
+      <div id="receiptCard" class="w-[min(94vw,980px)] max-h-[88vh] overflow-auto rounded-3xl card">
+        <div class="p-6 sm:p-8">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="text-xs text-white/55">Receipt</div>
+              <div class="mt-1 font-display text-2xl sm:text-3xl">Nocturne Stays — Booking Confirmation</div>
+              <div class="mt-2 text-xs text-white/55">This receipt is generated instantly. Payment is due at hotel.</div>
+            </div>
+            <button class="btn-ghost px-3 py-2 rounded-xl text-sm" data-close="receipt">Close</button>
+          </div>
+
+          <div class="mt-6 divider"></div>
+
+          <div id="receiptBody" class="mt-6 grid gap-4"></div>
+
+          <div class="mt-6 rounded-2xl bg-white/5 border border-white/10 p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <div class="text-sm font-semibold">Pay at hotel</div>
+                <div class="text-xs text-white/55 mt-1">Your room has been booked. Please present your booking ID at check-in and pay at the hotel.</div>
+              </div>
+              <div class="flex gap-2">
+                <button id="receiptPrint" class="btn px-4 py-2 rounded-xl text-sm">Print</button>
+                <button id="receiptCopy" class="btn-ghost px-4 py-2 rounded-xl text-sm">Copy details</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-xs text-white/45">Designed By Owais Ahmed 2467-2024</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App entry (ES modules — same behavior, split for maintainability) -->
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

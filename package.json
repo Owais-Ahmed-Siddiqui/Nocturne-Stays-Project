@@ -1,0 +1,27 @@
+{
+  "name": "nocturne-stays",
+  "version": "2.0.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Nocturne Stays — professional hotel booking platform (Express + Supabase + vanilla JS frontend)",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "nodemon server/index.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.12.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
